@@ -1,0 +1,85 @@
+# ==============================
+# Python
+# ==============================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ==============================
+# Virtual Environment
+# ==============================
+.venv/
+venv/
+env/
+ENV/
+
+# ==============================
+# Environment Variables / Secrets
+# ==============================
+.env
+.env.*
+!.env.example
+
+# ==============================
+# Jupyter
+# ==============================
+.ipynb_checkpoints/
+
+# ==============================
+# Data Science Cache
+# ==============================
+*.pkl
+*.pickle
+*.joblib
+
+# ==============================
+# Generated Models
+# ==============================
+models/*.pkl
+models/*.joblib
+
+# ==============================
+# Raw / Large Dataset Files
+# ==============================
+data/raw/*.csv
+data/raw/*.xlsx
+data/raw/*.xls
+
+# Keep processed dataset only if you want it tracked
+# data/processed/
+
+# ==============================
+# Generated Reports / Figures
+# ==============================
+reports/figures/
+
+# ==============================
+# Streamlit
+# ==============================
+.streamlit/secrets.toml
+
+# ==============================
+# IDE
+# ==============================
+.vscode/
+.idea/
+
+# ==============================
+# OS
+# ==============================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ==============================
+# Logs
+# ==============================
+*.log
+
+# ==============================
+# Temporary Files
+# ==============================
+*.tmp
+*.temp
+*.swp
+*.swo
