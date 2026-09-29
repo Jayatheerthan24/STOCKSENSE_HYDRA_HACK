@@ -41,7 +41,6 @@ models/*.joblib
 # ==============================
 # Raw / Large Dataset Files
 # ==============================
-data/raw/*.csv
 data/raw/*.xlsx
 data/raw/*.xls
 

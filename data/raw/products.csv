@@ -1,0 +1,21 @@
+product_id,category,sub_category,brand,mrp,cost_price,shelf_life,supplier_id
+P101,Dairy,Milk,Aavin,60,52,3,SUP01
+P102,Dairy,Curd,Aavin,45,36,7,SUP01
+P103,Dairy,Butter,MilkyMist,95,78,60,SUP02
+P104,Dairy,Cheese,MilkyMist,145,118,90,SUP02
+P201,Personal Care,Shampoo,GlowCare,120,79,730,SUP08
+P202,Personal Care,Soap,FreshLife,42,28,900,SUP08
+P203,Personal Care,Toothpaste,DentPro,95,63,540,SUP09
+P204,Personal Care,Face Wash,,165,108,540,SUP08
+P301,beverages,Soft Drink,FizzUp,50,31,180,SUP04
+P302,BEVERAGES,Juice,FreshSip,85,57,120,SUP04
+P303,Beverages,Energy Drink,VoltMax,110,72,180,SUP05
+P304,Beverages,Water Bottle,PureDrop,25,14,365,SUP05
+P401,snacks,Biscuits,Crispo,35,22,240,SUP06
+P402,Snacks,Chips,Crunchy,30,18,180,SUP06
+P403,Snacks,Chocolate,SweetBar,55,36,150,SUP07
+P404,Snacks,Nuts,NutriBite,180,128,180,SUP07
+P501,Household,Detergent,CleanMax,210,151,730,SUP10
+P502,Household,Dishwash,CleanMax,145,99,540,SUP10
+P503,Household,Tissue,SoftTouch,95,61,365,SUP11
+P601,Frozen,Ice Cream,Frosty,80,54,90,SUP12
