@@ -1,0 +1,5 @@
+Model,Partition,Accuracy,Precision,Recall,F1-Score,ROC-AUC,PR-AUC
+Logistic Regression,Validation,0.9688,0.879,1.0,0.9356,0.9946,0.9802
+Decision Tree,Validation,1.0,1.0,1.0,1.0,1.0,1.0
+Random Forest Classifier,Validation,1.0,1.0,1.0,1.0,1.0,1.0
+Decision Tree (Final Test),Test,1.0,1.0,1.0,1.0,1.0,1.0

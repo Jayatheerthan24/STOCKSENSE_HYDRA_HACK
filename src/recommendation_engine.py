@@ -153,19 +153,15 @@ The StockSense Recommendation Engine translates machine learning demand forecast
 ## 1. Safety Stock & Reorder Point Formulas
 
 ### Formulas
-$$\\text{{Average Daily Demand}} = \\frac{{\\text{{Forecast 7-Day Demand}}}}{{7}}$$
-
-$$\\text{{Lead Time Demand}} = \\text{{Average Daily Demand}} \\times \\text{{Lead Days}}$$
-
-$$\\text{{Safety Stock}} = z \\times \\sigma_{\\text{{demand}}} \\times \\sqrt{{\\text{{Lead Days}}}}$$
-
-$$\\text{{Reorder Point}} = \\text{{Lead Time Demand}} + \\text{{Safety Stock}}$$
-
-$$\\text{{Recommended Reorder Qty}} = \\max\\left(0, \\lceil\\text{{Reorder Point}} - \\text{{Closing Inventory}}\\rceil\\right)$$
+- **Average Daily Demand:** `Forecast 7-Day Demand / 7`
+- **Lead Time Demand:** `Average Daily Demand * Lead Days`
+- **Safety Stock:** `z * std_demand * sqrt(Lead Days)`
+- **Reorder Point:** `Lead Time Demand + Safety Stock`
+- **Recommended Reorder Qty:** `max(0, Reorder Point - Closing Inventory)`
 
 ### Parameter Specifications
-- **Service Level ($z$):** $z = {z_val}$ (corresponds to a 95% cycle service level target).
-- **Demand Volatility ($\\sigma_{\\text{{demand}}}$):** Rolling 7-day demand standard deviation (`rolling_std_7`). Fallback value = 1.0.
+- **Service Level (z):** z = {z_val} (corresponds to a 95% cycle service level target).
+- **Demand Volatility (std_demand):** Rolling 7-day demand standard deviation (`rolling_std_7`). Fallback value = 1.0.
 - **Lead Days:** Store/product specific replenishment lead time.
 
 ---

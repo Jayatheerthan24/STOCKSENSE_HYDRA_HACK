@@ -1,0 +1,4 @@
+Model,Partition,MAE,RMSE,R2,MAPE (%)
+Linear Regression,Validation,8.44,11.07,0.9738,25.95
+Random Forest Regressor,Validation,8.12,10.98,0.9742,8.91
+Random Forest Regressor (Final Test),Test,10.65,13.74,0.9597,14.66

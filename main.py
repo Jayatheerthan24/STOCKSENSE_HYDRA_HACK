@@ -99,7 +99,7 @@ def run_pipeline():
     summary_df = build_data_quality_summary(all_quality_logs)
     summary_csv_path = PROCESSED_DATA_DIR / "data_quality_summary.csv"
     summary_df.to_csv(summary_csv_path, index=False)
-    print(f"✓ Saved data quality summary to: {summary_csv_path}")
+    print(f"[OK] Saved data quality summary to: {summary_csv_path}")
 
     # --------------------------------------------------
     # Step 3: Daily Store x Product Transaction Aggregation
@@ -124,7 +124,7 @@ def run_pipeline():
     validation_res = validate_master_dataset(master_df)
     master_csv_path = PROCESSED_DATA_DIR / "master_dataset.csv"
     master_df.to_csv(master_csv_path, index=False)
-    print(f"✓ Saved Master Analytics Dataset to: {master_csv_path}")
+    print(f"[OK] Saved Master Analytics Dataset to: {master_csv_path}")
 
     # --------------------------------------------------
     # Step 5: Business KPI Calculations
@@ -186,7 +186,7 @@ def run_pipeline():
     print(f"• Statistical Tests Completed: {len(stat_results)}")
     print(f"• EDA Figures Created: {len(fig_paths)}")
     print("==================================================")
-    print("✓ Round 1 Pipeline Completed Successfully!")
+    print("[OK] Round 1 Pipeline Completed Successfully!")
 
 
 def generate_markdown_reports(summary_df, validation_res, kpis, stat_results, ov_tx, ov_prod, ov_stores, ov_inv, ov_ext):
@@ -334,7 +334,7 @@ The audit identified data quality anomalies across all five datasets. The consol
 """
 
     (REPORTS_DIR / "statistical_analysis.md").write_text(stat_md, encoding="utf-8")
-    print("✓ Saved markdown reports in reports/")
+    print("[OK] Saved markdown reports in reports/")
 
 
 if __name__ == "__main__":

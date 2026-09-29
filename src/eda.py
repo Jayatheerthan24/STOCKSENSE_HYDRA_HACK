@@ -53,13 +53,13 @@ def generate_all_eda_figures(master_df: pd.DataFrame, output_dir: Path = FIGURES
     if 'category' in df.columns and 'daily_revenue' in df.columns:
         cat_rev = df.groupby('category')['daily_revenue'].sum().reset_index().sort_values(by='daily_revenue', ascending=False)
         ax = sns.barplot(data=cat_rev, x='category', y='daily_revenue', hue='category', palette='Blues_r', legend=False)
-        plt.title('1. Total Revenue by Product Category (₹)')
+        plt.title('1. Total Revenue by Product Category (INR)')
         plt.xlabel('Category')
-        plt.ylabel('Total Revenue (₹)')
+        plt.ylabel('Total Revenue (INR)')
         plt.xticks(rotation=30, ha='right')
         for p in ax.patches:
             height = p.get_height()
-            ax.annotate(f'₹{height:,.0f}', (p.get_x() + p.get_width() / 2., height),
+            ax.annotate(f'Rs.{height:,.0f}', (p.get_x() + p.get_width() / 2., height),
                         ha='center', va='bottom', fontsize=9, xytext=(0, 3), textcoords='offset points')
     plt.tight_layout()
     chart1_path = output_dir / "01_revenue_by_category.png"
@@ -96,12 +96,12 @@ def generate_all_eda_figures(master_df: pd.DataFrame, output_dir: Path = FIGURES
         store_rev = df.groupby(['store_id', 'city'])['daily_revenue'].sum().reset_index().sort_values(by='daily_revenue', ascending=False)
         store_rev['store_label'] = store_rev['store_id'] + " (" + store_rev['city'] + ")"
         ax = sns.barplot(data=store_rev, x='store_label', y='daily_revenue', hue='store_label', palette='Purples_r', legend=False)
-        plt.title('3. Total Revenue by Store Location (₹)')
+        plt.title('3. Total Revenue by Store Location (INR)')
         plt.xlabel('Store (City)')
-        plt.ylabel('Total Revenue (₹)')
+        plt.ylabel('Total Revenue (INR)')
         for p in ax.patches:
             height = p.get_height()
-            ax.annotate(f'₹{height:,.0f}', (p.get_x() + p.get_width() / 2., height),
+            ax.annotate(f'Rs.{height:,.0f}', (p.get_x() + p.get_width() / 2., height),
                         ha='center', va='bottom', fontsize=9, xytext=(0, 3), textcoords='offset points')
     plt.tight_layout()
     chart3_path = output_dir / "03_revenue_by_store.png"
@@ -259,5 +259,5 @@ def generate_all_eda_figures(master_df: pd.DataFrame, output_dir: Path = FIGURES
     plt.close()
     generated_files.append(str(chart10_path))
 
-    print(f"✓ Generated {len(generated_files)} EDA figures in {output_dir}")
+    print(f"[OK] Generated {len(generated_files)} EDA figures in {output_dir}")
     return generated_files

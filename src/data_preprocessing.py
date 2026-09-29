@@ -165,7 +165,7 @@ def validate_master_dataset(master_df: pd.DataFrame) -> Dict[str, Any]:
     print(f"• Unique Stores: {unique_stores}")
     print(f"• Unique Products: {unique_products}")
     if duplicate_grain_count == 0:
-        print("✓ GRAIN VALIDATION PASSED: Zero duplicates for (date, store_id, product_id).")
+        print("[OK] GRAIN VALIDATION PASSED: Zero duplicates for (date, store_id, product_id).")
 
     return validation_result
 
@@ -254,7 +254,7 @@ def calculate_business_kpis(master_df: pd.DataFrame) -> Dict[str, Any]:
     print("\n==========================================")
     print(" BUSINESS KPI SUMMARY")
     print("==========================================")
-    print(f"• Total Revenue: ₹{kpis['total_revenue']:,.2f}")
+    print(f"• Total Revenue: INR {kpis['total_revenue']:,.2f}")
     print(f"• Total Units Sold: {kpis['total_units_sold']:,}")
     print(f"• Stock-out Rate: {kpis['stockout_rate_pct']}% ({stockout_events} stockout events)")
     print(f"• Average Days of Inventory: {kpis['avg_days_of_inventory']} days")
