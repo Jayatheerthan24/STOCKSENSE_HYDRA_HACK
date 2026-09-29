@@ -1,55 +1,59 @@
 # StockSense - Round 1 Data Quality Audit & Cleaning Report
 
 ## 1. Executive Summary
-This document presents the data quality audit and cleaning methodology for the IntelliData 2026 StockSense Challenge (Round 1). The raw input data consists of five relational CSV datasets located in `data/raw/`: `transactions.csv`, `products.csv`, `stores.csv`, `inventory.csv`, and `external_factors.csv`.
-
-All dataset cleaning routines follow strict, reproducible operations implemented in `src/data_cleaning.py`. **No raw files were altered or overwritten.**
+This document provides a comprehensive audit of the raw data files (`transactions.csv`, `products.csv`, `stores.csv`, `inventory.csv`, `external_factors.csv`) for the StockSense challenge. All dataset cleaning operations adhere strictly to documented treatment rules. No raw files were modified, and no silent repairs or dummy value fabrications were performed.
 
 ## 2. Dataset Inventory
 
-| Dataset | File Path | Grain / Entity | Key Columns |
-| :--- | :--- | :--- | :--- |
-| **Transactions** | `data/raw/transactions.csv` | Transaction Line Item | `transaction_id`, `date`, `store_id`, `product_id`, `quantity`, `selling_price`, `discount_pct`, `promotion_flag` |
-| **Products** | `data/raw/products.csv` | Product Catalog Item | `product_id`, `category`, `sub_category`, `brand`, `mrp`, `cost_price`, `shelf_life`, `supplier_id` |
-| **Stores** | `data/raw/stores.csv` | Store Profile | `store_id`, `city`, `store_type`, `floor_area_sqft`, `avg_daily_customers`, `region` |
-| **Inventory** | `data/raw/inventory.csv` | Daily Store x Product Stock | `date`, `store`, `product`, `opening`, `received`, `sold`, `closing`, `reorder_lvl`, `lead_days` |
-| **External Factors** | `data/raw/external_factors.csv` | Daily City Environment | `date`, `city`, `temp_c`, `rain_mm`, `holiday`, `festival`, `weekend`, `local_event` |
+| Dataset | Raw Rows | Raw Columns | Date Range | Unique IDs | Duplicate Rows | Missing Values |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Transactions** | 10557 | 11 | 2026-07-01 to 2026-08-31 | 10553 | 4 | 6 |
+| **Products** | 20 | 8 | N/A | 20 | 0 | 1 |
+| **Stores** | 4 | 6 | N/A | 4 | 0 | 0 |
+| **Inventory** | 4960 | 9 | 2026-07-01 to 2026-08-31 | N/A | 0 | 3 |
+| **External Factors** | 248 | 8 | 2026-07-01 to 2026-08-31 | N/A | 0 | 6 |
 
-## 3. Data Quality Audit & Cleaning Treatment
+## 3. Data Quality Issues & Summary Table
 
-### 3.1 Transactions Quality (`transactions.csv`)
-- **Exact Duplicate Rows:** Removed exact duplicate duplicate copies to prevent double counting.
-- **Conflicting Transaction IDs:** Identical `transaction_id` entries with conflicting line item attributes were flagged and excluded from valid positive sales aggregation.
-- **Negative & Zero Quantities:** Negative quantity entries (representing returns/voids) were flagged as invalid and excluded from positive sales aggregation without silent conversion to positive numbers.
-- **Invalid Pricing & Discounts:** Verified positive `selling_price` and clipped `discount_pct` to bounds [0, 100].
+The audit identified data quality anomalies across all five datasets. The consolidated quality summary is recorded in `data/processed/data_quality_summary.csv`.
 
-### 3.2 Products Quality (`products.csv`)
-- **Category Standardization:** Inconsistent category casings (e.g. `beverages`, `BEVERAGES`, `Beverages`) were standardized to Title Case (`Beverages`).
-- **Column Renaming:** Column `shelf_life` was standardized to `shelf_life_days`.
-- **Pricing Sanity:** Flagged items where `cost_price > mrp` or non-positive pricing existed.
+| dataset                 | issue                                                                        |   affected_rows |   affected_percentage | treatment                                                          | notes                                                                                            |
+|:------------------------|:-----------------------------------------------------------------------------|----------------:|----------------------:|:-------------------------------------------------------------------|:-------------------------------------------------------------------------------------------------|
+| transactions            | Exact duplicate rows                                                         |               4 |                  0.04 | Removed duplicate copy                                             | Exact match across all columns removed to prevent duplicate counting.                            |
+| transactions            | Negative quantity values                                                     |               2 |                  0.02 | Flagged as invalid sales; excluded from positive sales aggregation | Negative quantities represent invalid/return records; preserved in log, excluded from sales sum. |
+| transactions            | Missing or negative selling_price                                            |               3 |                  0.03 | Filtered out invalid pricing records                               | Valid positive selling price required for revenue calculation.                                   |
+| products                | Inconsistent category name casing (e.g. beverages, BEVERAGES)                |               3 |                 15    | Standardized category names to Title Case                          | Unified category text representation.                                                            |
+| products                | Missing brand                                                                |               1 |                  5    | Imputed as 'Unknown' / Preserved as NaN                            | 1 products missing brand.                                                                        |
+| inventory               | Missing inventory stock values                                               |               3 |                  0.06 | Imputed missing with 0 and flagged                                 | Missing opening/received/sold/closing values.                                                    |
+| inventory               | Inventory balance arithmetic mismatch (closing != opening + received - sold) |             992 |                 20    | Created inventory_mismatch_flag = 1 without silent repair          | 992 records (20.0%) have inventory balance discrepancies.                                        |
+| external_factors        | Missing temperature (temp_c)                                                 |               4 |                  1.61 | City-level median imputation + preserved temp_was_missing flag     | Imputed missing weather temperature values.                                                      |
+| external_factors        | Missing rainfall (rain_mm)                                                   |               2 |                  0.81 | City-level median imputation + preserved rain_was_missing flag     | Imputed missing rainfall data.                                                                   |
+| transactions / products | Sparse sales history (< 7 observed sales days)                               |               1 |                  5    | Created sparse_history_flag = 1; retained products in catalog      | Identified 1 products with limited historical demand.                                            |
 
-### 3.3 Stores Quality (`stores.csv`)
-- **Store Mapping:** Validated that each `store_id` uniquely maps to a single store profile (city, type, area, customer count).
+## 4. Specific Quality Audit Analyses
 
-### 3.4 Inventory Quality (`inventory.csv`)
-- **Key Standardisation:** Renamed `store` -> `store_id` and `product` -> `product_id`.
-- **Reconciliation Audit:** Calculated arithmetic balance equation: `closing = opening + received - sold`.
-- **Mismatch Flagging:** Created `inventory_mismatch_flag` (1 for balance mismatch, 0 for balanced). Discrepancies were **not** silently overwritten.
+### 4.1 Duplicate Analysis
+- **Exact Duplicate Rows:** Removed exact duplicate copies to prevent double-counting.
+- **Conflicting Transaction IDs:** Flagged duplicate transaction IDs appearing with differing transaction details to prevent corrupted sales totals.
 
-### 3.5 External Factors Quality (`external_factors.csv`)
-- **Weather Imputation:** Missing `temp_c` and `rain_mm` values were imputed using city-level medians.
-- **Missingness Flags:** Preserved explicit indicators `temp_was_missing` and `rain_was_missing`.
+### 4.2 Missing & Invalid Values
+- **Transactions:** Invalid or negative quantity records were flagged as non-sales and excluded from positive demand aggregation.
+- **Products:** Product category names (e.g. `beverages`, `BEVERAGES`, `Beverages`) were standardized to Title Case (`Beverages`). Column `shelf_life` was standardized to `shelf_life_days`.
+- **External Factors:** Missing temperature and rainfall values were imputed using city-level medians, preserving binary flags (`temp_was_missing`, `rain_was_missing`).
 
-### 3.6 Sparse History Analysis
-- Calculated total active sales days per product.
-- Products with fewer than 7 days of observed history were flagged with `sparse_history_flag = 1`.
-- Sparse products are retained in the master dataset to preserve complete catalog coverage.
+### 4.3 Inventory Reconciliation
+- Calculated formula: `closing = opening + received - sold`.
+- Records breaking this arithmetic balance were flagged with `inventory_mismatch_flag = 1`. Balance discrepancies were **not** silently overwritten.
 
-## 4. Master Dataset Integration & Grain Validation
-- **Required Grain:** `ONE ROW = ONE DATE x ONE STORE_ID x ONE PRODUCT_ID`
-- Integrated daily aggregated transactions with product master, store master, inventory, and external factors.
-- **Grain Validation:** Verified ZERO duplicate entries for `(date, store_id, product_id)` combination.
+### 4.4 Sparse History
+- Products with fewer than 7 days of observed sales history were identified and flagged with `sparse_history_flag = 1`. Sparse products are retained in the master dataset for catalog completeness.
 
-## 5. Output Data Files
-- `data/processed/master_dataset.csv`
-- `data/processed/data_quality_summary.csv`
+## 5. Master Dataset Grain Verification
+- **Master Grain:** `ONE ROW = ONE DATE x ONE STORE_ID x ONE PRODUCT_ID`
+- **Total Master Rows:** 4960
+- **Total Master Columns:** 39
+- **Duplicate Grain Count:** 0 (Verified ZERO duplicates)
+
+## 6. Remaining Limitations
+- Counterfactual lost sales during stock-outs require sophisticated demand estimation in Round 2/3.
+- Sparse products require hierarchical shrinkage or category-level pooling during forecasting.

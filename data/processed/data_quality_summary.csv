@@ -1,0 +1,11 @@
+dataset,issue,affected_rows,affected_percentage,treatment,notes
+transactions,Exact duplicate rows,4,0.04,Removed duplicate copy,Exact match across all columns removed to prevent duplicate counting.
+transactions,Negative quantity values,2,0.02,Flagged as invalid sales; excluded from positive sales aggregation,"Negative quantities represent invalid/return records; preserved in log, excluded from sales sum."
+transactions,Missing or negative selling_price,3,0.03,Filtered out invalid pricing records,Valid positive selling price required for revenue calculation.
+products,"Inconsistent category name casing (e.g. beverages, BEVERAGES)",3,15.0,Standardized category names to Title Case,Unified category text representation.
+products,Missing brand,1,5.0,Imputed as 'Unknown' / Preserved as NaN,1 products missing brand.
+inventory,Missing inventory stock values,3,0.06,Imputed missing with 0 and flagged,Missing opening/received/sold/closing values.
+inventory,Inventory balance arithmetic mismatch (closing != opening + received - sold),992,20.0,Created inventory_mismatch_flag = 1 without silent repair,992 records (20.0%) have inventory balance discrepancies.
+external_factors,Missing temperature (temp_c),4,1.61,City-level median imputation + preserved temp_was_missing flag,Imputed missing weather temperature values.
+external_factors,Missing rainfall (rain_mm),2,0.81,City-level median imputation + preserved rain_was_missing flag,Imputed missing rainfall data.
+transactions / products,Sparse sales history (< 7 observed sales days),1,5.0,Created sparse_history_flag = 1; retained products in catalog,Identified 1 products with limited historical demand.

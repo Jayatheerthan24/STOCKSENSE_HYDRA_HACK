@@ -52,7 +52,7 @@ def generate_all_eda_figures(master_df: pd.DataFrame, output_dir: Path = FIGURES
     plt.figure(figsize=(10, 6))
     if 'category' in df.columns and 'daily_revenue' in df.columns:
         cat_rev = df.groupby('category')['daily_revenue'].sum().reset_index().sort_values(by='daily_revenue', ascending=False)
-        ax = sns.barplot(data=cat_rev, x='category', y='daily_revenue', palette='Blues_r')
+        ax = sns.barplot(data=cat_rev, x='category', y='daily_revenue', hue='category', palette='Blues_r', legend=False)
         plt.title('1. Total Revenue by Product Category (₹)')
         plt.xlabel('Category')
         plt.ylabel('Total Revenue (₹)')
@@ -73,7 +73,7 @@ def generate_all_eda_figures(master_df: pd.DataFrame, output_dir: Path = FIGURES
     plt.figure(figsize=(10, 6))
     if 'category' in df.columns and 'daily_units_sold' in df.columns:
         cat_units = df.groupby('category')['daily_units_sold'].sum().reset_index().sort_values(by='daily_units_sold', ascending=False)
-        ax = sns.barplot(data=cat_units, x='category', y='daily_units_sold', palette='Greens_r')
+        ax = sns.barplot(data=cat_units, x='category', y='daily_units_sold', hue='category', palette='Greens_r', legend=False)
         plt.title('2. Total Units Sold by Product Category')
         plt.xlabel('Category')
         plt.ylabel('Total Units Sold (Quantity)')
@@ -95,7 +95,7 @@ def generate_all_eda_figures(master_df: pd.DataFrame, output_dir: Path = FIGURES
     if 'store_id' in df.columns and 'daily_revenue' in df.columns:
         store_rev = df.groupby(['store_id', 'city'])['daily_revenue'].sum().reset_index().sort_values(by='daily_revenue', ascending=False)
         store_rev['store_label'] = store_rev['store_id'] + " (" + store_rev['city'] + ")"
-        ax = sns.barplot(data=store_rev, x='store_label', y='daily_revenue', palette='Purples_r')
+        ax = sns.barplot(data=store_rev, x='store_label', y='daily_revenue', hue='store_label', palette='Purples_r', legend=False)
         plt.title('3. Total Revenue by Store Location (₹)')
         plt.xlabel('Store (City)')
         plt.ylabel('Total Revenue (₹)')
@@ -132,7 +132,7 @@ def generate_all_eda_figures(master_df: pd.DataFrame, output_dir: Path = FIGURES
     plt.figure(figsize=(8, 6))
     if 'promotion_flag' in df.columns and 'daily_units_sold' in df.columns:
         df['promo_label'] = df['promotion_flag'].map({0: 'Non-Promotional', 1: 'Promotional'})
-        ax = sns.barplot(data=df, x='promo_label', y='daily_units_sold', ci=None, palette='Set2')
+        ax = sns.barplot(data=df, x='promo_label', y='daily_units_sold', hue='promo_label', errorbar=None, palette='Set2', legend=False)
         plt.title('5. Average Daily Units Sold: Promotion vs Non-Promotion')
         plt.xlabel('Promotion Status')
         plt.ylabel('Average Daily Units Sold per Observation')
@@ -152,7 +152,7 @@ def generate_all_eda_figures(master_df: pd.DataFrame, output_dir: Path = FIGURES
     plt.figure(figsize=(8, 6))
     if 'weekend' in df.columns and 'daily_units_sold' in df.columns:
         df['weekend_label'] = df['weekend'].map({0: 'Weekday', 1: 'Weekend'})
-        ax = sns.barplot(data=df, x='weekend_label', y='daily_units_sold', ci=None, palette='Oranges')
+        ax = sns.barplot(data=df, x='weekend_label', y='daily_units_sold', hue='weekend_label', errorbar=None, palette='Oranges', legend=False)
         plt.title('6. Average Demand: Weekday vs Weekend')
         plt.xlabel('Day Type')
         plt.ylabel('Average Daily Units Sold')
@@ -204,7 +204,7 @@ def generate_all_eda_figures(master_df: pd.DataFrame, output_dir: Path = FIGURES
         df['is_stockout'] = (df['closing'] == 0).astype(int)
         store_so = df.groupby('store_id')['is_stockout'].mean().reset_index()
         store_so['stockout_pct'] = store_so['is_stockout'] * 100
-        ax = sns.barplot(data=store_so, x='store_id', y='stockout_pct', palette='Reds_r')
+        ax = sns.barplot(data=store_so, x='store_id', y='stockout_pct', hue='store_id', palette='Reds_r', legend=False)
         plt.title('8. Stock-out Frequency (%) by Store')
         plt.xlabel('Store ID')
         plt.ylabel('Stock-out Rate (% of observations)')
@@ -228,7 +228,7 @@ def generate_all_eda_figures(master_df: pd.DataFrame, output_dir: Path = FIGURES
         cat_so = df.groupby('category')['is_stockout'].mean().reset_index()
         cat_so['stockout_pct'] = cat_so['is_stockout'] * 100
         cat_so = cat_so.sort_values('stockout_pct', ascending=False)
-        ax = sns.barplot(data=cat_so, x='category', y='stockout_pct', palette='YlOrRd_r')
+        ax = sns.barplot(data=cat_so, x='category', y='stockout_pct', hue='category', palette='YlOrRd_r', legend=False)
         plt.title('9. Stock-out Frequency (%) by Category')
         plt.xlabel('Category')
         plt.ylabel('Stock-out Rate (% of observations)')
@@ -249,7 +249,7 @@ def generate_all_eda_figures(master_df: pd.DataFrame, output_dir: Path = FIGURES
     plt.figure(figsize=(10, 7))
     if 'store_id' in df.columns and 'category' in df.columns and 'daily_units_sold' in df.columns:
         pivot_df = df.pivot_table(index='store_id', columns='category', values='daily_units_sold', aggfunc='sum', fill_value=0)
-        sns.heatmap(pivot_df, annot=True, fmt=',d', cmap='YlGnBu', cbar_kws={'label': 'Total Units Sold'})
+        sns.heatmap(pivot_df, annot=True, fmt='.0f', cmap='YlGnBu', cbar_kws={'label': 'Total Units Sold'})
         plt.title('10. Store x Product Category Total Demand Heatmap')
         plt.xlabel('Product Category')
         plt.ylabel('Store ID')

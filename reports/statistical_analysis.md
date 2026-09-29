@@ -1,42 +1,40 @@
 # StockSense - Round 1 Statistical Hypothesis Testing Report
 
-## Executive Summary
-
-To satisfy Round 1 requirements for the IntelliData 2026 StockSense challenge, three statistical hypothesis tests were conducted on the Master Analytics Dataset (`data/processed/master_dataset.csv`).
-
-The automated test runner is implemented in `src/statistical_analysis.py` and executed via `main.py`.
-
----
-
-## Statistical Test Results Table
+## Executive Summary of Hypotheses
 
 | Analysis | H0 | H1 | Test | Statistic | p-value | Decision | Business Interpretation |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Analysis 1** | Mean daily demand on promotion days == Mean daily demand on non-promotion days | Mean daily demand on promotion days > Mean daily demand on non-promotion days | Mann-Whitney U Test (Right-tailed) | *Calculated on run* | *< 0.05* | **Reject H0** | Promotions significantly increase daily sales units. Store inventory must prepare for promotional demand surges. |
-| **Analysis 2** | Mean daily demand is equal across all store types | Mean daily demand differs across at least one store type pair | Kruskal-Wallis H-Test | *Calculated on run* | *< 0.05* | **Reject H0** | Store formats (Hypermarket, Supermarket, Express) exhibit statistically distinct demand distributions requiring store-specific inventory parameters. |
-| **Analysis 3** | Stock-out occurrence is independent of promotion status | Stock-out occurrence is associated with promotion status | Chi-Square Test of Independence (\(\chi^2\)) | *Calculated on run* | *< 0.05* | **Reject H0** | Stock-out frequency is significantly associated with promotion status, highlighting supply chain bottlenecks during promotional periods. |
+| **Analysis 1** | Mean daily demand on promotion days == Mean daily demand on non-promotion days | Mean daily demand on promotion days > Mean daily demand on non-promotion days | Mann-Whitney U Test (Right-tailed) | 1861591.0 | 1.5593e-15 | **Reject H0** | Promotions significantly increase sales demand (p = 1.5593e-15 < 0.05). Average promotional daily sales (17.33 units) are 23.4% higher than non-promotional daily sales (14.05 units). |
+| **Analysis 2** | Mean daily demand is equal across all store types | Mean daily demand differs across at least one store type pair | Kruskal-Wallis H-Test | 540.6123 | 4.0507e-118 | **Reject H0** | Mean daily demand differs significantly across store types (p = 4.0507e-118 < 0.05). Observed store type average demand: Supermarket: 13.5 units, Hypermarket: 20.9 units, Express: 10.2 units. |
+| **Analysis 3** | Stock-out occurrence is independent of promotion status | Stock-out occurrence is associated with promotion status | Chi-Square Test of Independence (χ²) | 7.931 | 4.8596e-03 | **Reject H0** | Stock-out occurrence is significantly associated with promotion status (p = 4.8596e-03 < 0.05). Stock-out rate during promotions (24.0%) differs significantly from non-promotion periods (19.5%). |
 
 ---
 
-## Detailed Test Methodologies & Assumptions
+## Detailed Test Interpretations
 
-### Analysis 1: Promotion Impact on Sales
-- **Question:** Do promotions significantly increase sales?
-- **Null Hypothesis (\(H_0\)):** \(\mu_{\text{promo}} = \mu_{\text{non-promo}}\)
-- **Alternative Hypothesis (\(H_1\)):** \(\mu_{\text{promo}} > \mu_{\text{non-promo}}\)
-- **Test Selection:** Right-tailed Mann-Whitney U Test (chosen as a non-parametric alternative due to non-normal demand distributions).
-- **Practical Significance:** Promotional lift provides empirical evidence for demand elasticity during marketing campaigns.
+### Analysis 1: Promotion Impact on Demand
+- **Hypothesis:** 
+  - \(H_0\): Mean daily sales on promotion days == Mean daily sales on non-promotion days.
+  - \(H_1\): Mean daily sales on promotion days > Mean daily sales on non-promotion days.
+- **Methodology:** Mann-Whitney U test (non-parametric two-sample test) evaluated on daily units sold across promotional vs non-promotional observations.
+- **Results:** 1.5593e-15 (Stat = 1861591.0).
+- **Decision:** **Reject H0**
+- **Business Significance:** Promotions deliver a statistically significant and practical demand lift. Retail operations must align inventory stock with promotional calendars.
 
-### Analysis 2: Store Type Demand Differences
-- **Question:** Does mean demand differ across store types?
-- **Null Hypothesis (\(H_0\)):** \(\mu_{\text{Hypermarket}} = \mu_{\text{Supermarket}} = \mu_{\text{Express}}\)
-- **Alternative Hypothesis (\(H_1\)):** At least one store type mean demand differs.
-- **Test Selection:** Kruskal-Wallis H-Test (non-parametric ANOVA across multiple independent store groups).
-- **Practical Significance:** Capacity planning and reorder parameters cannot be uniform across store types.
+### Analysis 2: Demand Variations Across Store Types
+- **Hypothesis:** 
+  - \(H_0\): Mean daily demand is equal across all store types.
+  - \(H_1\): Mean daily demand differs across at least one pair of store types.
+- **Methodology:** Kruskal-Wallis H-test comparing daily units sold across store format groups (Hypermarket, Supermarket, Express).
+- **Results:** 4.0507e-118 (Stat = 540.6123).
+- **Decision:** **Reject H0**
+- **Business Significance:** Store capacity and customer traffic dictate significantly different demand distributions. Reorder parameters must be customized per store type.
 
-### Analysis 3: Stock-out Frequency vs Promotion Status
-- **Question:** Is stock-out frequency associated with promotion status?
-- **Null Hypothesis (\(H_0\)):** Stock-out status is independent of promotion status.
-- **Alternative Hypothesis (\(H_1\)):** Stock-out status is dependent on promotion status.
-- **Test Selection:** Chi-Square Test of Independence (\(\chi^2\)) on a 2x2 contingency table (Stock-out Yes/No vs Promotion Yes/No).
-- **Practical Significance:** Demonstrates that stock-outs are non-random and heavily correlated with promotional activity.
+### Analysis 3: Association Between Stock-outs and Promotions
+- **Hypothesis:** 
+  - \(H_0\): Stock-out occurrence is independent of promotion status.
+  - \(H_1\): Stock-out occurrence is associated with promotion status.
+- **Methodology:** Chi-Square Test of Independence (\(\chi^2\)) on a 2x2 contingency table (Stock-out Flag vs Promotion Flag).
+- **Results:** 4.8596e-03 (Stat = 7.931).
+- **Decision:** **Reject H0**
+- **Business Significance:** Promotions significantly exacerbate stock-out risks. Supply chain planning must integrate promotional forecasting directly with inventory replenishment.
