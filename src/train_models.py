@@ -31,13 +31,6 @@ from sklearn.metrics import (
     roc_auc_score, average_precision_score, confusion_matrix, roc_curve
 )
 
-try:
-    from xgboost import XGBRegressor, XGBClassifier
-    HAS_XGBOOST = True
-except ImportError:
-    HAS_XGBOOST = False
-    print("[WARNING] xgboost not installed. Using Random Forest and Decision Tree / Linear models.")
-
 from src.utils import PROJECT_ROOT, PROCESSED_DATA_DIR, REPORTS_DIR, FIGURES_DIR, ensure_directories
 from src.feature_engineering import prepare_modeling_dataset
 from src.model_explainability import extract_feature_importance, generate_explainability_report
@@ -172,8 +165,6 @@ def run_training_pipeline():
         "Linear Regression": LinearRegression(),
         "Random Forest Regressor": RandomForestRegressor(n_estimators=100, max_depth=12, random_state=42)
     }
-    if HAS_XGBOOST:
-        demand_models["XGBoost Regressor"] = XGBRegressor(n_estimators=100, max_depth=5, learning_rate=0.05, random_state=42)
 
     dem_metrics_list = []
     trained_dem_models = {}
@@ -259,9 +250,7 @@ def run_training_pipeline():
         "Decision Tree": DecisionTreeClassifier(max_depth=6, class_weight='balanced', random_state=42),
         "Random Forest Classifier": RandomForestClassifier(n_estimators=100, max_depth=10, class_weight='balanced', random_state=42)
     }
-    if HAS_XGBOOST:
-        stockout_models["XGBoost Classifier"] = XGBClassifier(n_estimators=100, max_depth=5, scale_pos_weight=scale_pos_ratio, random_state=42)
-
+   
     so_metrics_list = []
     trained_so_models = {}
 
